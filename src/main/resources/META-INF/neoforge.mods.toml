@@ -1,0 +1,29 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="All Rights Reserved"
+issueTrackerURL="https://github.com/x-TheFox/CRB/issues"
+
+[[mods]]
+modId="crb"
+version="1.0.0-alpha"
+displayName="Cursed Reality: Boundless"
+updateJSONURL="https://github.com/x-TheFox/CRB"
+displayURL="https://github.com/x-TheFox/CRB"
+logoFile="logo.png"
+credits="JJA Bedrock Addon Team & CRB Engineering"
+authors="CRB Team"
+description='''The definitive Jujutsu Kaisen combat mod for Minecraft Java Edition, replicating and elevating Jujutsu Awakening on NeoForge 1.21.1.'''
+
+[[dependencies.crb]]
+modId="neoforge"
+type="required"
+versionRange="[21.1.0,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.crb]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1,1.22)"
+ordering="NONE"
+side="BOTH"

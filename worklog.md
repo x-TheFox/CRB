@@ -55,3 +55,35 @@ Stage Summary:
 - 135 dossier files and 5 reconnaissance/gate reports created.
 - Gate G1 PASSED.
 - Ready to commit and merge `docs/character-recon` into `main`.
+---
+Task ID: 2
+Agent: Orchestrator
+Task: Phase 2 — Tech Stack Decision Record, NeoForge 1.21.1 API Cartography & Root Build Configuration
+Work Log:
+1. Evaluated candidate libraries against 5 constitutional criteria in `docs/research/evaluation-matrix.md`.
+2. Authored `docs/research/tsdr.md` locking the Six Pillars (Free Camera API 2.1.1, GeckoLib 4.9.3, Player Animation Lib 1.1.6, Veil 4.5.2, YACL 3.8.2, SmartBrainLib 1.16.11).
+3. Authored `docs/research/neoforge-api-notes.md` detailing Data Attachments, CustomPacketPayload networking, Veil shaders, and behavior trees.
+4. Generated Gradle 8.10.2 wrapper and configured `settings.gradle`, `gradle.properties`, and `build.gradle`.
+5. Authored Gate Report `docs/operations/gate-reports/G2.md` declaring Phase 2 passed.
+Stage Summary:
+- Tech stack locked and documented.
+- Gradle build configuration verified with NeoForge 21.1.93.
+- Gate G2 PASSED.
+
+---
+Task ID: 3
+Agent: Orchestrator
+Task: Phase 3 — Core Architecture ADR Suite & Gojo Vertical Slice
+Work Log:
+1. Authored complete 5-document ADR suite in `docs/architecture/` (`ADR-001` through `ADR-005`).
+2. Engineered core data attachment and progression system: `CursedEnergyData`, `SorcererGrade`, `Clan`, `Trait`.
+3. Implemented base ability framework: `Ability`, `AbilityCategory`, `ModRegistries`.
+4. Engineered Gojo vertical slice: `LapseBlueAbility` (spatial attraction vector physics) and `HollowPurpleAbility` (marching imaginary mass spatial erasure).
+5. Authored JUnit 5 test suite `CursedEnergyDataTest.java` (6/6 tests passing).
+6. Executed full build pipeline via `./gradlew build`, producing verified mod jar `build/libs/crb-1.0.0-alpha.jar`.
+7. Authored Gate Report `docs/operations/gate-reports/G3.md` declaring Phase 3 passed.
+Stage Summary:
+- Core architecture fully compiled, tested, and packaged.
+- Vertical slice operational.
+- Gate G3 PASSED.
+- Ready to commit and merge `feat/tech-stack-and-build` into `main`.
