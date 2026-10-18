@@ -1,0 +1,25 @@
+# NeoForge & Gradle
+.gradle/
+build/
+bin/
+run/
+out/
+logs/
+*.log
+
+# IDE
+.idea/
+*.iml
+*.iws
+*.ipr
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keep libs
+!libs/*.jar
