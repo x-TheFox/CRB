@@ -1,0 +1,148 @@
+# Build & Release — G2-D4 discharge (issue #12) + user directive 2026-10-19:
+# "build and release the mod automatically on every commit".
+#
+# Contract:
+#   * push to ANY branch ....... CI build (compile + jar packaging), no release
+#   * pull_request to main ..... CI build, no release
+#   * push to main ............. CI build + GitHub Release with the jar attached
+#                                (prerelease, tag v{mod_version}-b{run_number})
+#   * push tag v* .............. CI build + formal release (becomes "Latest")
+#
+# The mod jar requires NeoForge 21.1.x + the 6 adopted-stack dependencies listed in
+# src/main/templates/META-INF/neoforge.mods.toml (all marked required there).
+# libs/ pins the two CDN-sourced jars (Free Camera API, GeckoLib) verbatim — see
+# docs/research/tsdr.md R2 — so the CI build is hermetic without extra setup steps.
+
+name: Build & Release
+
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Queue runs per ref; cancel only superseded PR builds so in-flight main-branch
+# releases are never killed by a follow-up commit.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  build:
+    name: Build mod jar (Java 21 / NeoForge 21.1)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+    outputs:
+      mod_version: ${{ steps.version.outputs.mod_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Temurin) with Gradle cache
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: gradle
+
+      - name: Extract mod version
+        id: version
+        run: |
+          MOD_VERSION="$(grep '^mod_version=' gradle.properties | cut -d= -f2 | tr -d '[:space:]')"
+          if [ -z "$MOD_VERSION" ]; then
+            echo "mod_version not found in gradle.properties" >&2
+            exit 1
+          fi
+          echo "mod_version=$MOD_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Building Cursed Reality: Boundless $MOD_VERSION"
+
+      - name: Gradle build
+        run: ./gradlew build --stacktrace
+
+      - name: Verify jar was produced
+        run: |
+          shopt -s nullglob
+          jars=(build/libs/*.jar)
+          if [ ${#jars[@]} -eq 0 ]; then
+            echo "build/libs produced no jar — build is broken" >&2
+            exit 1
+          fi
+          ls -la build/libs/
+
+      - name: Collect distributable jar(s)
+        run: |
+          mkdir -p dist
+          find build/libs -maxdepth 1 -name '*.jar' ! -name '*-sources.jar' -exec cp {} dist/ \;
+          ls -la dist/
+
+      - name: Upload jar artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cursedreality-jar
+          path: dist/*.jar
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: GitHub Release (auto per commit)
+    needs: build
+    if: >-
+      github.event_name == 'push' &&
+      (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/v'))
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download jar
+        uses: actions/download-artifact@v4
+        with:
+          name: cursedreality-jar
+          path: dist
+
+      - name: Compute release tag
+        id: tag
+        run: |
+          if [[ "$GITHUB_REF" == refs/tags/* ]]; then
+            TAG="${GITHUB_REF#refs/tags/}"
+            PRERELEASE=false
+          else
+            TAG="v${{ needs.build.outputs.mod_version }}-b${{ github.run_number }}"
+            PRERELEASE=true
+          fi
+          echo "tag=$TAG"           >> "$GITHUB_OUTPUT"
+          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
+          echo "release tag: $TAG (prerelease=$PRERELEASE)"
+
+      - name: Create release and attach jar
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          target_commitish: ${{ github.sha }}
+          name: "Cursed Reality: Boundless ${{ steps.tag.outputs.tag }}"
+          prerelease: ${{ steps.tag.outputs.prerelease }}
+          generate_release_notes: true
+          body: |
+            Automated build of **Cursed Reality: Boundless** — every commit to `main`
+            produces this release automatically (CI workflow `.github/workflows/build-release.yml`).
+
+            **Install (client + server):** drop the jar into your `mods/` folder alongside
+            **NeoForge 21.1.x for Minecraft 1.21.1** and the required dependencies:
+
+            | Dependency | Version | Side |
+            |---|---|---|
+            | Free Camera API | 2.1.1 | client |
+            | GeckoLib | 4.9.3 | both |
+            | Player Animation Library | 1.1.6+mc.1.21.1 | client |
+            | Veil | 4.5.2 | client |
+            | Yet Another Config Lib | 3.8.2+1.21.1-neoforge | client |
+            | SmartBrainLib | 1.16.11 | both |
+
+            Formal releases are tagged `v*`; per-commit builds are tagged
+            `v{version}-b{run}` and marked pre-release so the *Latest* pointer
+            only tracks tagged versions.
+          files: dist/*.jar
