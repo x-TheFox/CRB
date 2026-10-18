@@ -87,3 +87,39 @@ Stage Summary:
 - Vertical slice operational.
 - Gate G3 PASSED.
 - Ready to commit and merge `feat/tech-stack-and-build` into `main`.
+
+---
+Task ID: 4
+Agent: Orchestrator
+Task: Phase 4 — Character Waves, Ability Engine & Domain Clashing System
+Work Log:
+1. Implemented all 14 major character kits and minor CTs discovered in JJA reconnaissance:
+   - Sukuna: Dismantle, Cleave, Fire Arrow, World Cutting Slash, Malevolent Shrine (200m open domain)
+   - Yuji: Divergent Fist, Black Flash streak chain, Blood Manipulation (Piercing Blood)
+   - Megumi: Ten Shadows summon, Mahoraga Subjugation Ritual, Chimera Shadow Garden
+   - Jogo: Disaster Flames, Maximum: Meteor, Coffin of the Iron Mountain
+   - Mahito: Idle Transfiguration, Self-Embodiment of Perfection
+   - Kashimo: Sure-Hit Lightning Discharge, Mythical Beast Amber
+   - Higuruma: Deadly Sentencing (courtroom non-lethal domain), Executioner's Sword
+   - Todo: Boogie Woogie position swap, Simple Domain anti-barrier
+   - Hakari: Idle Death Gamble pachinko jackpot with infinite CE
+   - Toji / Maki: Inverted Spear technique nullification, Soul Split Katana direct durability bypass
+   - Inumaki: Cursed Speech commands with throat backlash
+   - Finger Bearer: Mugetsu high-density CE beam
+   - Absorption: Supernova spatial blast
+   - Minor CTs: Haruta Shigemo Miracle fatal damage nullification
+2. Engineered mathematical Domain Expansion Engine:
+   - `BarrierType` enum (Closed Sphere, Open Barrier, Non-Lethal Courtroom, Pocket Dimension)
+   - `DomainInstance` with spatial containment math and duration tracking
+   - `DomainManager` with real-time overlap collision detection and refinement clash resolution (|ΔR| > 50 shatters weaker domain)
+3. Built `AbilityRegistry` mapping all 31 Jujutsu abilities and integrated `/jjk` Brigadier commands (`energy`, `grade`, `trait`, `clan`, `burnout`, `domain`, `ability list`, `ability cast`).
+4. Wired game lifecycle events to `NeoForge.EVENT_BUS` for commands registration, domain ticking on `LevelTickEvent.Post`, and player cursed energy regeneration on `PlayerTickEvent.Post`.
+5. Created unit tests `AbilityRegistryTest` and `DomainEngineTest`, achieving 15/15 passing tests across all test suites.
+6. Executed `./gradlew build`, producing verified mod jar `build/libs/crb-1.0.0-alpha.jar` (99 KB).
+7. Authored Gate Report `docs/operations/gate-reports/G4.md` declaring Phase 4 passed.
+Stage Summary:
+- Full character roster and domain clashing engine implemented and verified.
+- 15/15 JUnit 5 tests passing.
+- Gate G4 PASSED.
+- Ready to commit and merge `feat/character-waves-and-engine` into `main`.
+
